@@ -1,0 +1,36 @@
+{
+  "name": "helpdesk-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Helpdesk System - Monorepo with Frontend and Backend",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend & npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspaces",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "format:check": "npm run format:check --workspaces --if-present",
+    "format:all": "npm run format:all --workspaces --if-present",
+    "db:migrate": "npm run db:migrate --workspace=backend",
+    "db:reset": "npm run db:reset --workspace=backend",
+    "db:push": "npm run db:push --workspace=backend",
+    "db:seed": "npm run db:seed --workspace=backend"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "helpdesk",
+    "ticketing",
+    "support"
+  ],
+  "author": "",
+  "license": "ISC"
+}
