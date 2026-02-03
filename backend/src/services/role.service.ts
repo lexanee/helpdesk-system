@@ -1,7 +1,11 @@
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import { createLog } from "./log.service.js";
-import { CreateRoleDTO, PaginationQueryParams, UpdateRoleDTO } from "../types/dtos.js";
+import {
+  CreateRoleDTO,
+  PaginationQueryParams,
+  UpdateRoleDTO,
+} from "../types/dtos.js";
 import {
   createPaginatedResponse,
   getPaginationParams,
@@ -56,10 +60,7 @@ export const getRoleById = async (id: string) => {
   return role;
 };
 
-export const createRole = async (
-  data: CreateRoleDTO,
-  userId: string,
-) => {
+export const createRole = async (data: CreateRoleDTO, userId: string) => {
   const { name, description, permissionIds } = createRoleSchema.parse(data);
 
   const role = await prisma.role.create({

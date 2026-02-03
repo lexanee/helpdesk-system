@@ -1,6 +1,9 @@
 import { Router } from "express";
 import * as logController from "../controllers/log.controller.js";
-import { authenticateToken, requirePermission } from "../middlewares/auth.middleware.js";
+import {
+  authenticateToken,
+  requirePermission,
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -39,9 +42,10 @@ router.use(authenticateToken as any);
  *       200:
  *         description: List of logs
  */
-router.get("/", 
-    requirePermission("admin:manage_logs") as any,
-    logController.getLogs as any
+router.get(
+  "/",
+  requirePermission("admin:manage_logs") as any,
+  logController.getLogs as any,
 );
 
 export default router;

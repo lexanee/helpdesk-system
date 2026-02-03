@@ -1,4 +1,8 @@
-import { CreateCategoryDTO, PaginationQueryParams, UpdateCategoryDTO } from "../types/dtos.js";
+import {
+  CreateCategoryDTO,
+  PaginationQueryParams,
+  UpdateCategoryDTO,
+} from "../types/dtos.js";
 import prisma from "../utils/prisma.js";
 import {
   createPaginatedResponse,

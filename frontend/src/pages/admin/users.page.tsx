@@ -1,40 +1,138 @@
 import {
   ActionIcon,
   Badge,
+  Button,
   Container,
   Group,
+  LoadingOverlay,
+  Modal,
   Paper,
+  PasswordInput,
   Select,
+  Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { IconSearch, IconTrash } from "@tabler/icons-react";
-import { useState } from "react";
+import { IconEdit, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 
 import { type Column, DataTable } from "@/components/data-table";
 import { usePermission } from "@/hooks/use-permission";
+import { useRoles } from "@/hooks/use-roles";
 import {
+  useCreateUser,
   useDeleteUser,
   type User,
-  useUpdateUserRole,
+  useUpdateUser,
   useUsers,
 } from "@/hooks/use-users";
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
 
-  const { data: userData, isLoading: loading } = useUsers({ page, limit });
+  // Modal state
+  const [opened, { open, close }] = useDisclosure(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+
+  const { data: userData, isLoading: loadingUsers } = useUsers({ page, limit });
   const users: User[] = userData?.data || [];
   const totalRecords = userData?.meta.total || 0;
 
-  const updateUserRole = useUpdateUserRole();
+  const { data: roles = [], isLoading: loadingRoles } = useRoles();
+
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+
+  const { hasPermission } = usePermission();
+
+  const form = useForm({
+    initialValues: {
+      email: "",
+      fullName: "",
+      password: "",
+      roleId: "",
+    },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      fullName: (value) => (value.length < 1 ? "Full name is required" : null),
+      password: (value) => {
+        if (!editingUser && value.length < 6)
+          return "Password must be at least 6 chars";
+        if (editingUser && value.length > 0 && value.length < 6)
+          return "Password must be at least 6 chars";
+        return null;
+      },
+      roleId: (value) => (value.length < 1 ? "Role is required" : null),
+    },
+  });
+
+  const handleOpenModal = (user?: User) => {
+    if (user) {
+      setEditingUser(user);
+      form.setValues({
+        email: user.email,
+        fullName: user.fullName || "",
+        password: "", // Don't show password
+        roleId:
+          roles.find((r) => r.name === user.role?.name)?.id ||
+          (user.role as any).id ||
+          "",
+      });
+    } else {
+      setEditingUser(null);
+      form.reset();
+    }
+    open();
+  };
+
+  const handleSubmit = async (values: typeof form.values) => {
+    try {
+      if (editingUser) {
+        await updateUser.mutateAsync({
+          id: editingUser.id,
+          data: {
+            email: values.email,
+            fullName: values.fullName,
+            roleId: values.roleId,
+            password: values.password || undefined,
+          },
+        });
+        notifications.show({
+          title: "Success",
+          message: "User updated successfully",
+          color: "green",
+        });
+      } else {
+        await createUser.mutateAsync({
+          email: values.email,
+          fullName: values.fullName,
+          roleId: values.roleId,
+          password: values.password,
+        });
+        notifications.show({
+          title: "Success",
+          message: "User created successfully",
+          color: "green",
+        });
+      }
+      close();
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: (error as Error).message || "Operation failed",
+        color: "red",
+      });
+    }
+  };
 
   const handleDeleteUser = (userId: string) => {
     modals.openConfirmModal({
@@ -66,31 +164,7 @@ export default function UsersPage() {
     });
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
-    modals.openConfirmModal({
-      title: "Change User Role",
-      children: <Text>Are you sure you want to change this user's role?</Text>,
-      labels: { confirm: "Confirm", cancel: "Cancel" },
-      onConfirm: async () => {
-        try {
-          await updateUserRole.mutateAsync({ id: userId, role: newRole });
-          notifications.show({
-            title: "Success",
-            message: "User role updated successfully",
-            color: "green",
-          });
-        } catch (error) {
-          notifications.show({
-            title: "Error",
-            message: (error as Error).message || "Failed to update user role",
-            color: "red",
-          });
-        }
-      },
-    });
-  };
-
-  // Client-side filtering (Note: only filters current page)
+  // Client-side filtering
   const filteredUsers = users.filter((user: User) => {
     const matchesSearch =
       user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -99,8 +173,8 @@ export default function UsersPage() {
     return matchesSearch && matchesRole;
   });
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
+  const getRoleBadgeColor = (roleName: string) => {
+    switch (roleName) {
       case "administrator":
         return "red";
       case "support_agent":
@@ -111,6 +185,21 @@ export default function UsersPage() {
         return "gray";
     }
   };
+
+  // Prepare role options for Select components
+  const roleOptions = useMemo(() => {
+    return roles.map((r) => ({
+      value: r.id,
+      label: r.name,
+    }));
+  }, [roles]);
+
+  const roleFilterOptions = useMemo(() => {
+    return roles.map((r) => ({
+      value: r.name,
+      label: r.name,
+    }));
+  }, [roles]);
 
   const columns: Column<User>[] = [
     {
@@ -123,8 +212,11 @@ export default function UsersPage() {
       accessor: "role",
       title: "Role",
       render: (user) => (
-        <Badge color={getRoleBadgeColor(user.role?.name || "customer")}>
-          {(user.role?.name || "customer").replace("_", " ")}
+        <Badge
+          color={getRoleBadgeColor(user.role?.name || "customer")}
+          variant="light"
+        >
+          {user.role?.name || "N/A"}
         </Badge>
       ),
     },
@@ -138,19 +230,13 @@ export default function UsersPage() {
       title: "Actions",
       render: (user) => (
         <Group gap="xs">
-          <Select
-            placeholder="Change role"
-            value={user.role?.name}
-            onChange={(value) => value && handleRoleChange(user.id, value)}
-            data={[
-              { value: "customer", label: "Customer" },
-              { value: "support_agent", label: "Support Agent" },
-              { value: "administrator", label: "Administrator" },
-            ]}
-            size="xs"
-            w={150}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <ActionIcon
+            variant="subtle"
+            color="blue"
+            onClick={() => handleOpenModal(user)}
+          >
+            <IconEdit size={16} />
+          </ActionIcon>
           <ActionIcon
             color="red"
             variant="subtle"
@@ -167,8 +253,6 @@ export default function UsersPage() {
     },
   ];
 
-  const { hasPermission } = usePermission();
-
   if (!hasPermission("admin:manage_users")) {
     return (
       <Container>
@@ -179,9 +263,15 @@ export default function UsersPage() {
 
   return (
     <Container size="xl">
-      <Title order={2} mb="xl">
-        Users
-      </Title>
+      <Group justify="space-between" mb="xl">
+        <Title order={2}>Users</Title>
+        <Button
+          leftSection={<IconPlus size={16} />}
+          onClick={() => handleOpenModal()}
+        >
+          Create User
+        </Button>
+      </Group>
 
       <Paper withBorder p="md" mb="md">
         <Group gap="md">
@@ -196,13 +286,9 @@ export default function UsersPage() {
             placeholder="Filter by role"
             value={roleFilter}
             onChange={setRoleFilter}
-            data={[
-              { value: "", label: "All Roles" },
-              { value: "customer", label: "Customer" },
-              { value: "support_agent", label: "Support Agent" },
-              { value: "administrator", label: "Administrator" },
-            ]}
+            data={[{ value: "", label: "All Roles" }, ...roleFilterOptions]}
             clearable
+            searchable
           />
         </Group>
       </Paper>
@@ -212,11 +298,61 @@ export default function UsersPage() {
         columns={columns}
         total={totalRecords}
         page={page}
-        limit={10}
+        limit={limit}
         onPageChange={setPage}
-        isLoading={loading}
+        isLoading={loadingUsers || loadingRoles}
         queryKey={["users"]}
       />
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={editingUser ? "Edit User" : "Create User"}
+      >
+        <LoadingOverlay
+          visible={createUser.isPending || updateUser.isPending}
+        />
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack>
+            <TextInput
+              label="Email"
+              placeholder="user@example.com"
+              required
+              {...form.getInputProps("email")}
+            />
+            <TextInput
+              label="Full Name"
+              placeholder="John Doe"
+              required
+              {...form.getInputProps("fullName")}
+            />
+            <PasswordInput
+              label="Password"
+              placeholder={
+                editingUser
+                  ? "Leave blank to keep current password"
+                  : "Enter password"
+              }
+              required={!editingUser}
+              {...form.getInputProps("password")}
+            />
+            <Select
+              label="Role"
+              placeholder="Select role"
+              data={roleOptions}
+              required
+              searchable
+              {...form.getInputProps("roleId")}
+            />
+            <Group justify="flex-end" mt="md">
+              <Button variant="default" onClick={close}>
+                Cancel
+              </Button>
+              <Button type="submit">{editingUser ? "Update" : "Create"}</Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
     </Container>
   );
 }

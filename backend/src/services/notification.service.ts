@@ -6,8 +6,6 @@ import {
   getPaginationParams,
 } from "../utils/pagination.utils.js";
 
-
-
 export const createNotification = async (
   userId: string,
   title: string,
@@ -30,7 +28,10 @@ export const createNotification = async (
   return notification;
 };
 
-export const getUserNotifications = async (userId: string, query: PaginationQueryParams) => {
+export const getUserNotifications = async (
+  userId: string,
+  query: PaginationQueryParams,
+) => {
   const { skip, take, page, limit } = getPaginationParams(query);
 
   const [notifications, total] = await Promise.all([

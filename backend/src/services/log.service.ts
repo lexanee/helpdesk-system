@@ -5,7 +5,6 @@ import {
   getPaginationParams,
 } from "../utils/pagination.utils.js";
 
-
 export const createLog = async (
   userId: string,
   action: string,
@@ -29,7 +28,6 @@ export const createLog = async (
     },
   });
 };
-
 
 export const getLogs = async (
   query: PaginationQueryParams,

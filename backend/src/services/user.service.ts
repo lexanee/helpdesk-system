@@ -1,4 +1,8 @@
-import { CreateUserDTO, PaginationQueryParams, UpdateUserDTO } from "../types/dtos.js";
+import {
+  CreateUserDTO,
+  PaginationQueryParams,
+  UpdateUserDTO,
+} from "../types/dtos.js";
 
 import bcrypt from "bcryptjs";
 import {
@@ -51,7 +55,11 @@ export const getUserById = async (id: string) => {
   return user;
 };
 
-export const createUser = async (data: CreateUserDTO) => {
+export const createUser = async (
+  data: CreateUserDTO,
+  performerId: string,
+  ipAddress?: string,
+) => {
   const { email, password, fullName, roleId } = data;
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -61,7 +69,7 @@ export const createUser = async (data: CreateUserDTO) => {
 
   // Provide default password if not supplied (e.g. for manually created users)
   // In a real app, maybe generate one or require it. Assuming required for now or handled by frontend.
-  const finalPassword = password || "DefaultPass123!"; 
+  const finalPassword = password || "DefaultPass123!";
   const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
   const user = await prisma.user.create({
@@ -81,10 +89,23 @@ export const createUser = async (data: CreateUserDTO) => {
     },
   });
 
+  await createLog(
+    performerId,
+    "Created user",
+    `Created user ${user.email}`,
+    undefined,
+    ipAddress,
+  );
+
   return user;
 };
 
-export const updateUser = async (id: string, data: UpdateUserDTO) => {
+export const updateUser = async (
+  id: string,
+  data: UpdateUserDTO,
+  performerId: string,
+  ipAddress?: string,
+) => {
   const { email, fullName, roleId, password } = data;
 
   const updateData: UpdateUserDTO = { email, fullName, roleId };
@@ -103,6 +124,14 @@ export const updateUser = async (id: string, data: UpdateUserDTO) => {
       createdAt: true,
     },
   });
+
+  await createLog(
+    performerId,
+    "Updated user",
+    `Updated user ${user.email}`,
+    undefined,
+    ipAddress,
+  );
 
   return user;
 };

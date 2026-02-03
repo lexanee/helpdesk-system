@@ -1,4 +1,8 @@
-import { CreateStatusDTO, PaginationQueryParams, UpdateStatusDTO } from "../types/dtos.js";
+import {
+  CreateStatusDTO,
+  PaginationQueryParams,
+  UpdateStatusDTO,
+} from "../types/dtos.js";
 import prisma from "../utils/prisma.js";
 import {
   createPaginatedResponse,

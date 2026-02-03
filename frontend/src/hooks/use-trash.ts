@@ -4,7 +4,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import type { PaginationQueryParams } from "@/types/api";
 
-type TrashType = "users" | "tickets" | "services" | "categories" | "statuses" | "priorities";
+type TrashType =
+  | "users"
+  | "tickets"
+  | "services"
+  | "categories"
+  | "statuses"
+  | "priorities";
 
 interface TrashQueryParams extends PaginationQueryParams {
   // Add any specific filters if needed
@@ -26,11 +32,13 @@ const getSingularType = (type: string) => {
 
 export const useTrash = (type: TrashType, query?: TrashQueryParams) => {
   const singularType = getSingularType(type);
-  
+
   return useQuery({
     queryKey: ["trash", type, query],
     queryFn: async () => {
-      const { data } = await api.get(`/trash/${singularType}`, { params: query });
+      const { data } = await api.get(`/trash/${singularType}`, {
+        params: query,
+      });
       return data;
     },
     enabled: !!type,

@@ -7,8 +7,11 @@ import {
   createPaginatedResponse,
   getPaginationParams,
 } from "../utils/pagination.utils.js";
-import { CreateTicketDTO, TicketQueryParams, UpdateTicketDTO } from "../types/dtos.js";
-
+import {
+  CreateTicketDTO,
+  TicketQueryParams,
+  UpdateTicketDTO,
+} from "../types/dtos.js";
 
 const createTicketSchema = z.object({
   title: z.string().min(1),
@@ -137,7 +140,6 @@ export const createTicket = async (
 
   return ticket;
 };
-
 
 export const getTickets = async (
   query: TicketQueryParams,

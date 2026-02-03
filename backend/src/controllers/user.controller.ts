@@ -28,7 +28,8 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const user = await userService.createUser(req.body);
+    const performerId = (req as any).user.userId;
+    const user = await userService.createUser(req.body, performerId, req.ip);
     res.status(201).json(user);
   } catch (error: unknown) {
     const err = error as Error;
@@ -39,7 +40,13 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const user = await userService.updateUser(req.params.id, req.body);
+    const performerId = (req as any).user.userId;
+    const user = await userService.updateUser(
+      req.params.id,
+      req.body,
+      performerId,
+      req.ip,
+    );
     res.json(user);
   } catch (error: unknown) {
     const err = error as Error;
@@ -77,4 +84,3 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 };
-

@@ -10,7 +10,8 @@ const consoleFormat = printf((info) => {
   const ts = info.timestamp as string;
   const ctx = info.context ? `[${String(info.context)}]` : "";
   const { level, message, timestamp: _ts, context: _ctx, ...meta } = info;
-  const metaStr = Object.keys(meta).length > 1 ? ` ${JSON.stringify(meta)}` : "";
+  const metaStr =
+    Object.keys(meta).length > 1 ? ` ${JSON.stringify(meta)}` : "";
   return `${ts} ${level} ${ctx} ${String(message)}${metaStr}`;
 });
 
@@ -20,7 +21,7 @@ const consoleFormat = printf((info) => {
 const fileFormat = combine(
   timestamp(),
   errors({ stack: true }),
-  winston.format.json()
+  winston.format.json(),
 );
 
 /**
@@ -30,16 +31,13 @@ const logger = winston.createLogger({
   level: isDevelopment ? "debug" : "info",
   format: combine(
     timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    errors({ stack: true })
+    errors({ stack: true }),
   ),
   defaultMeta: { service: "helpdesk-backend" },
   transports: [
     // Console transport (always enabled)
     new winston.transports.Console({
-      format: combine(
-        colorize({ all: true }),
-        consoleFormat
-      ),
+      format: combine(colorize({ all: true }), consoleFormat),
     }),
   ],
 });
@@ -51,13 +49,13 @@ if (isProduction) {
       filename: "logs/error.log",
       level: "error",
       format: fileFormat,
-    })
+    }),
   );
   logger.add(
     new winston.transports.File({
       filename: "logs/combined.log",
       format: fileFormat,
-    })
+    }),
   );
 }
 

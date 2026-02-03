@@ -4,7 +4,11 @@ import {
   createPaginatedResponse,
   getPaginationParams,
 } from "../utils/pagination.utils.js";
-import { CreateServiceDTO, PaginationQueryParams, UpdateServiceDTO } from "../types/dtos.js";
+import {
+  CreateServiceDTO,
+  PaginationQueryParams,
+  UpdateServiceDTO,
+} from "../types/dtos.js";
 import { createLog } from "./log.service.js";
 
 const createServiceSchema = z.object({
