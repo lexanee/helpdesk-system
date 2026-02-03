@@ -84,7 +84,7 @@ router.get("/:id", getPriorityById as any);
  */
 router.post(
   "/",
-  requirePermission("admin:manage_priorities") as any,
+  requirePermission("priorities:manage") as any,
   createPriority as any,
 );
 
@@ -121,7 +121,7 @@ router.post(
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_priorities") as any,
+  requirePermission("priorities:manage") as any,
   updatePriority as any,
 );
 
@@ -145,7 +145,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_priorities") as any,
+  requirePermission("priorities:manage") as any,
   deletePriority as any,
 );
 

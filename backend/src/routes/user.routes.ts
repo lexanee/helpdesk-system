@@ -36,7 +36,7 @@ router.use(authenticateToken as any);
  */
 router.get(
   "/",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:view") as any,
   userController.getAllUsers as any,
 );
 
@@ -62,7 +62,7 @@ router.get(
  */
 router.get(
   "/:id",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:view") as any,
   userController.getUserById as any,
 );
 
@@ -102,7 +102,7 @@ router.get(
  */
 router.post(
   "/",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:manage") as any,
   userController.createUser as any,
 );
 
@@ -137,7 +137,7 @@ router.post(
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:manage") as any,
   userController.updateUser as any,
 );
 
@@ -161,7 +161,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:manage") as any,
   userController.deleteUser as any,
 );
 
@@ -196,7 +196,7 @@ router.delete(
  */
 router.patch(
   "/:id/role",
-  requirePermission("admin:manage_users") as any,
+  requirePermission("users:manage") as any,
   userController.updateUserRole as any,
 );
 

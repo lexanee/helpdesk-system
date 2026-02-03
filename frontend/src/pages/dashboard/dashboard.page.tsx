@@ -21,6 +21,7 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "@tanstack/react-router";
 
+import { AccessGuard } from "@/components/guards/access-guard";
 import { useCategories } from "@/hooks/use-categories";
 import { usePriorities } from "@/hooks/use-priorities";
 import { useStatuses } from "@/hooks/use-statuses";
@@ -87,12 +88,14 @@ export default function DashboardPage() {
     <Container size="xl">
       <Group justify="space-between" mb="xl">
         <Title order={2}>Dashboard</Title>
-        <Button
-          leftSection={<IconPlus size={16} />}
-          onClick={() => navigate({ to: "/tickets/new" })}
-        >
-          Create Ticket
-        </Button>
+        <AccessGuard permissions="tickets:create">
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate({ to: "/tickets/new" })}
+          >
+            Create Ticket
+          </Button>
+        </AccessGuard>
       </Group>
 
       <Grid mb="xl">

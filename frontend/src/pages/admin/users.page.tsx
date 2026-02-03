@@ -22,6 +22,7 @@ import { IconEdit, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 
 import { type Column, DataTable } from "@/components/data-table";
+import { AccessGuard } from "@/components/guards/access-guard";
 import { usePermission } from "@/hooks/use-permission";
 import { useRoles } from "@/hooks/use-roles";
 import {
@@ -229,31 +230,33 @@ export default function UsersPage() {
       accessor: "actions",
       title: "Actions",
       render: (user) => (
-        <Group gap="xs">
-          <ActionIcon
-            variant="subtle"
-            color="blue"
-            onClick={() => handleOpenModal(user)}
-          >
-            <IconEdit size={16} />
-          </ActionIcon>
-          <ActionIcon
-            color="red"
-            variant="subtle"
-            title="Delete User"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteUser(user.id);
-            }}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        </Group>
+        <AccessGuard permissions="users:manage">
+          <Group gap="xs">
+            <ActionIcon
+              variant="subtle"
+              color="blue"
+              onClick={() => handleOpenModal(user)}
+            >
+              <IconEdit size={16} />
+            </ActionIcon>
+            <ActionIcon
+              color="red"
+              variant="subtle"
+              title="Delete User"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteUser(user.id);
+              }}
+            >
+              <IconTrash size={16} />
+            </ActionIcon>
+          </Group>
+        </AccessGuard>
       ),
     },
   ];
 
-  if (!hasPermission("admin:manage_users")) {
+  if (!hasPermission(["users:manage", "users:view"])) {
     return (
       <Container>
         <Text>Access Denied</Text>
@@ -265,12 +268,14 @@ export default function UsersPage() {
     <Container size="xl">
       <Group justify="space-between" mb="xl">
         <Title order={2}>Users</Title>
-        <Button
-          leftSection={<IconPlus size={16} />}
-          onClick={() => handleOpenModal()}
-        >
-          Create User
-        </Button>
+        <AccessGuard permissions="users:manage">
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => handleOpenModal()}
+          >
+            Create User
+          </Button>
+        </AccessGuard>
       </Group>
 
       <Paper withBorder p="md" mb="md">

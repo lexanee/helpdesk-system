@@ -50,7 +50,7 @@ export default function StatusesPage() {
 
   const { hasPermission } = usePermission();
 
-  if (!hasPermission("admin:manage_statuses")) {
+  if (!hasPermission("statuses:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

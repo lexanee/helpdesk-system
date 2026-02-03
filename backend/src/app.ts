@@ -12,6 +12,7 @@ import ticketRoutes from "./routes/ticket.routes.js";
 
 import categoryRoutes from "./routes/category.routes.js";
 import logRoutes from "./routes/log.routes.js";
+import moduleRoutes from "./routes/module.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import permissionRoutes from "./routes/permission.routes.js";
 import priorityRoutes from "./routes/priority.routes.js";
@@ -61,6 +62,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/statuses", statusRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/modules", moduleRoutes);
 app.use("/api/logs", logRoutes);
 
 app.get("/", (req, res) => {

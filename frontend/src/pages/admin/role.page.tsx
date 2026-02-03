@@ -18,13 +18,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/data-table";
+import { useModules } from "@/hooks/use-modules";
 import { usePermission } from "@/hooks/use-permission";
 import {
   type Role,
-  useAllPermissions,
   useCreateRole,
   useDeleteRole,
   useRoles,
@@ -38,8 +38,7 @@ export function RoleListPage() {
   const [editingRole, setEditingRole] = useState<Role | null>(null);
 
   const { data: roles = [], isLoading: isLoadingRoles } = useRoles();
-  const { data: allPermissions = [], isLoading: isLoadingPerms } =
-    useAllPermissions();
+  const { data: modules = [], isLoading: isLoadingModules } = useModules();
 
   const createRole = useCreateRole();
   const updateRole = useUpdateRole();
@@ -58,22 +57,14 @@ export function RoleListPage() {
     },
   });
 
-  // Group permissions for the modal
-  const groupedPermissions = useMemo(() => {
-    return allPermissions.reduce((acc: any, perm: any) => {
-      const parts = perm.slug.split(":");
-      const entity = parts[0];
-      if (!acc[entity]) acc[entity] = [];
-      acc[entity].push(perm);
-      return acc;
-    }, {});
-  }, [allPermissions]);
-
   const handleSubmit = async (values: typeof form.values) => {
     try {
+      // Flatten permissions from modules to find IDs
+      const allPerms = modules.flatMap((m) => m.permissions);
+
       // Convert slugs back to IDs
       const permissionIds = values.permissions
-        .map((slug) => allPermissions.find((p) => p.slug === slug)?.id)
+        .map((slug) => allPerms.find((p) => p.slug === slug)?.id)
         .filter(Boolean) as string[];
 
       const payload = {
@@ -156,7 +147,7 @@ export function RoleListPage() {
     open();
   };
 
-  if (!hasPermission("admin:manage_roles")) {
+  if (!hasPermission("roles:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>
@@ -235,41 +226,37 @@ export function RoleListPage() {
             <Text fw={500} mt="md">
               Permissions
             </Text>
-            {isLoadingPerms ? (
+            {isLoadingModules ? (
               <Loader size="sm" />
             ) : (
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-                {Object.entries(groupedPermissions).map(
-                  ([entity, perms]: [string, any]) => (
-                    <Paper key={entity} p="sm" withBorder bg="gray.0">
-                      <Text tt="capitalize" fw={600} mb="xs">
-                        {entity}
-                      </Text>
-                      <Stack gap="xs">
-                        {perms.map((perm: any) => (
-                          <Checkbox
-                            key={perm.id}
-                            label={perm.description || perm.slug}
-                            value={perm.slug}
-                            checked={form.values.permissions.includes(
-                              perm.slug,
-                            )}
-                            onChange={(event) => {
-                              const checked = event.currentTarget.checked;
-                              const current = form.values.permissions;
-                              form.setFieldValue(
-                                "permissions",
-                                checked
-                                  ? [...current, perm.slug]
-                                  : current.filter((p) => p !== perm.slug),
-                              );
-                            }}
-                          />
-                        ))}
-                      </Stack>
-                    </Paper>
-                  ),
-                )}
+                {modules.map((module) => (
+                  <Paper key={module.id} p="sm" withBorder bg="gray.0">
+                    <Text tt="capitalize" fw={600} mb="xs">
+                      {module.name}
+                    </Text>
+                    <Stack gap="xs">
+                      {module.permissions.map((perm) => (
+                        <Checkbox
+                          key={perm.id}
+                          label={perm.description || perm.slug}
+                          value={perm.slug}
+                          checked={form.values.permissions.includes(perm.slug)}
+                          onChange={(event) => {
+                            const checked = event.currentTarget.checked;
+                            const current = form.values.permissions;
+                            form.setFieldValue(
+                              "permissions",
+                              checked
+                                ? [...current, perm.slug]
+                                : current.filter((p) => p !== perm.slug),
+                            );
+                          }}
+                        />
+                      ))}
+                    </Stack>
+                  </Paper>
+                ))}
               </SimpleGrid>
             )}
 

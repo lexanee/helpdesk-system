@@ -51,7 +51,7 @@ router.use(authenticateToken as any);
  */
 router.post(
   "/",
-  requirePermission("ticket:create") as any,
+  requirePermission("tickets:create") as any,
   upload.array("attachments") as any,
   ticketController.createTicket as any,
 );
@@ -87,7 +87,7 @@ router.post(
  */
 router.get(
   "/",
-  requirePermission("ticket:view") as any,
+  requirePermission("tickets:view") as any,
   ticketController.getTickets as any,
 );
 
@@ -113,7 +113,7 @@ router.get(
  */
 router.get(
   "/:id",
-  requirePermission("ticket:view") as any,
+  requirePermission("tickets:view") as any,
   ticketController.getTicketById as any,
 );
 
@@ -150,7 +150,7 @@ router.get(
  */
 router.put(
   "/:id",
-  requirePermission("ticket:update") as any,
+  requirePermission("tickets:update") as any,
   ticketController.updateTicket as any,
 );
 
@@ -174,7 +174,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("ticket:delete") as any,
+  requirePermission("tickets:delete") as any,
   ticketController.deleteTicket as any,
 );
 
@@ -214,7 +214,7 @@ router.delete(
  */
 router.post(
   "/:id/messages",
-  requirePermission("ticket:view") as any, // Assuming view permission allows adding messages for now, or maybe ticket:update?
+  requirePermission("tickets:update") as any,
   upload.array("attachments") as any,
   ticketController.createMessage as any,
 );
@@ -239,7 +239,7 @@ router.post(
  */
 router.get(
   "/:id/messages",
-  requirePermission("ticket:view") as any,
+  requirePermission("tickets:view") as any,
   ticketController.getTicketMessages as any,
 );
 
@@ -272,7 +272,7 @@ router.get(
  */
 router.get(
   "/:id/messages/attachments/:filename",
-  requirePermission("ticket:view") as any,
+  requirePermission("tickets:view") as any,
   ticketController.getAttachment as any,
 );
 

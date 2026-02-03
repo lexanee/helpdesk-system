@@ -55,7 +55,7 @@ export default function LogsPage() {
 
   if (isLoading) return <Loader />;
 
-  if (!hasPermission("admin:manage_logs")) {
+  if (!hasPermission("logs:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

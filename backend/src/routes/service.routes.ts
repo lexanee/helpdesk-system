@@ -38,7 +38,7 @@ router.use(authenticateToken as any);
  */
 router.post(
   "/",
-  requirePermission("admin:manage_services") as any,
+  requirePermission("services:manage") as any,
   serviceController.createService as any,
 );
 
@@ -87,7 +87,7 @@ router.get("/", serviceController.getServices as any);
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_services") as any,
+  requirePermission("services:manage") as any,
   serviceController.updateService as any,
 );
 
@@ -111,7 +111,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_services") as any,
+  requirePermission("services:manage") as any,
   serviceController.deleteService as any,
 );
 

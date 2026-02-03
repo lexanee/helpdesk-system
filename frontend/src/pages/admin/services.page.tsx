@@ -51,7 +51,7 @@ export default function ServicesPage() {
 
   const { hasPermission } = usePermission();
 
-  if (!hasPermission("admin:manage_services")) {
+  if (!hasPermission("services:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

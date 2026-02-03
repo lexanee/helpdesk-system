@@ -30,7 +30,7 @@ router.use(authenticateToken as any);
  */
 router.get(
   "/",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("permissions:manage") as any,
   getAllPermissions as any,
 );
 
@@ -56,7 +56,7 @@ router.get(
  */
 router.get(
   "/:id",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("permissions:manage") as any,
   getPermissionById as any,
 );
 
@@ -90,7 +90,7 @@ router.get(
  */
 router.post(
   "/",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("permissions:manage") as any,
   createPermission as any,
 );
 
@@ -125,7 +125,7 @@ router.post(
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("permissions:manage") as any,
   updatePermission as any,
 );
 
@@ -149,7 +149,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("permissions:manage") as any,
   deletePermission as any,
 );
 

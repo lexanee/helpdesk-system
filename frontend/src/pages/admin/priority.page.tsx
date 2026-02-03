@@ -123,7 +123,7 @@ export function PriorityListPage() {
     });
   };
 
-  if (!hasPermission("admin:manage_priorities")) {
+  if (!hasPermission("priorities:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

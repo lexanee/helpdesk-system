@@ -34,7 +34,7 @@ router.use(authenticateToken as any);
  */
 router.post(
   "/",
-  requirePermission("admin:manage_categories") as any,
+  requirePermission("categories:manage") as any,
   categoryController.createCategory as any,
 );
 
@@ -77,7 +77,7 @@ router.get("/", categoryController.getAllCategories as any);
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_categories") as any,
+  requirePermission("categories:manage") as any,
   categoryController.updateCategory as any,
 );
 
@@ -99,7 +99,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_categories") as any,
+  requirePermission("categories:manage") as any,
   categoryController.deleteCategory as any,
 );
 

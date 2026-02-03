@@ -51,7 +51,7 @@ export default function CategoriesPage() {
 
   const { hasPermission } = usePermission();
 
-  if (!hasPermission("admin:manage_categories")) {
+  if (!hasPermission("categories:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

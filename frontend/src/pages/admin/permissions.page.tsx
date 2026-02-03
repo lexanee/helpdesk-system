@@ -130,7 +130,7 @@ export function PermissionsPage() {
     open();
   };
 
-  if (!hasPermission("admin:manage_roles")) {
+  if (!hasPermission("permissions:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

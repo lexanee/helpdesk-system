@@ -44,7 +44,7 @@ router.use(authenticateToken as any);
  */
 router.get(
   "/",
-  requirePermission("admin:manage_logs") as any,
+  requirePermission("logs:manage") as any,
   logController.getLogs as any,
 );
 

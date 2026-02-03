@@ -124,7 +124,7 @@ export default function TrashPage() {
 
   const { hasPermission } = usePermission();
 
-  if (!hasPermission("admin:manage_trash")) {
+  if (!hasPermission("trash:manage")) {
     return (
       <Container>
         <Text>Access Denied</Text>

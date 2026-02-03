@@ -146,7 +146,7 @@ export default function TicketsPage() {
     <Container size="xl">
       <Group justify="space-between" mb="xl">
         <Title order={2}>Tickets</Title>
-        <AccessGuard permissions="ticket:create">
+        <AccessGuard permissions="tickets:create">
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => navigate({ to: "/tickets/new" })}

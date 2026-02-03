@@ -3,59 +3,83 @@ import { createLogger } from "../utils/logger.js";
 
 const logger = createLogger("RBACSeeder");
 
-const PERMISSIONS = [
-  // Main Access
-  { slug: "main:view_dashboard", description: "View dashboard" },
-  { slug: "main:view_activities", description: "View activities" },
-  { slug: "main:view_notifications", description: "View notifications" },
-  { slug: "main:view_sessions", description: "View sessions" },
-
-  // Tickets Access
-  { slug: "ticket:create", description: "Create new tickets" },
-  { slug: "ticket:view", description: "View tickets" },
-  { slug: "ticket:update", description: "Update ticket details" },
-  { slug: "ticket:delete", description: "Delete tickets" },
-  { slug: "ticket:assign_to_agent", description: "Assign tickets to agents" },
-  { slug: "ticket:change_status", description: "Change ticket status" },
-
-  // Admin Access
-  { slug: "admin:manage_categories", description: "Manage categories" },
-  { slug: "admin:manage_services", description: "Manage services" },
-  { slug: "admin:manage_priorities", description: "Manage priorities" },
-  { slug: "admin:manage_statuses", description: "Manage statuses" },
-  { slug: "admin:manage_users", description: "Manage users" },
-  { slug: "admin:manage_roles", description: "Manage roles" },
-  { slug: "admin:manage_trash", description: "Manage trash" },
-  { slug: "admin:manage_logs", description: "Manage logs" },
+// Modules and Permissions Definition
+const MODULES = [
+  {
+    name: "Dashboard",
+    description: "Main dashboard and overview",
+    permissions: [
+      { slug: "dashboard:view", description: "View dashboard" },
+      { slug: "activities:view", description: "View activities" },
+      { slug: "notifications:view", description: "View notifications" },
+      { slug: "sessions:view", description: "View sessions" },
+    ],
+  },
+  {
+    name: "Ticket Management",
+    description: "Manage helpdesk tickets",
+    permissions: [
+      { slug: "tickets:create", description: "Create new tickets" },
+      { slug: "tickets:view", description: "View tickets" },
+      { slug: "tickets:update", description: "Update ticket details" },
+      { slug: "tickets:delete", description: "Delete tickets" },
+      { slug: "tickets:assign", description: "Assign tickets to agents" },
+      { slug: "tickets:change_status", description: "Change ticket status" },
+    ],
+  },
+  {
+    name: "User Management",
+    description: "Manage users, roles, and permissions",
+    permissions: [
+      { slug: "users:view", description: "View users" },
+      { slug: "users:manage", description: "Manage users" },
+      { slug: "roles:manage", description: "Manage roles" },
+      { slug: "permissions:manage", description: "Manage permissions" },
+    ],
+  },
+  {
+    name: "System Management",
+    description: "Manage system configurations",
+    permissions: [
+      { slug: "categories:manage", description: "Manage categories" },
+      { slug: "services:manage", description: "Manage services" },
+      { slug: "priorities:manage", description: "Manage priorities" },
+      { slug: "statuses:manage", description: "Manage statuses" },
+      { slug: "trash:manage", description: "Manage trash" },
+      { slug: "logs:manage", description: "Manage logs" },
+    ],
+  },
 ];
 
 const ROLES = {
   administrator: {
     description: "Full system access",
-    permissions: ["*"], // Special case for all permissions
+    permissions: ["*"],
   },
   support_agent: {
     description: "Process tickets",
     permissions: [
-      "main:view_dashboard",
-      "main:view_activities",
-      "main:view_notifications",
-      "main:view_sessions",
-      "ticket:view",
-      "ticket:update",
-      "ticket:change_status",
+      "tickets:create",
+      "dashboard:view",
+      "activities:view",
+      "notifications:view",
+      "sessions:view",
+      "tickets:view",
+      "tickets:update",
+      "tickets:change_status",
+      "tickets:assign",
     ],
   },
   customer: {
     description: "Create and view own tickets",
     permissions: [
-      "main:view_dashboard",
-      "main:view_activities",
-      "main:view_notifications",
-      "main:view_sessions",
-      "ticket:create",
-      "ticket:view",
-      "ticket:update",
+      "dashboard:view",
+      "activities:view",
+      "notifications:view",
+      "sessions:view",
+      "tickets:create",
+      "tickets:view",
+      "tickets:update",
     ],
   },
 };
@@ -63,15 +87,31 @@ const ROLES = {
 export const seedRBAC = async () => {
   logger.info("Seeding RBAC...");
 
-  // 1. Create Permissions
   const permissionMap = new Map();
-  for (const p of PERMISSIONS) {
-    const permission = await prisma.permission.upsert({
-      where: { slug: p.slug },
+
+  // 1. Create Modules and Permissions
+  for (const m of MODULES) {
+    const module = await prisma.module.upsert({
+      where: { name: m.name },
       update: {},
-      create: p,
+      create: {
+        name: m.name,
+        description: m.description,
+      },
     });
-    permissionMap.set(p.slug, permission.id);
+
+    for (const p of m.permissions) {
+      const permission = await prisma.permission.upsert({
+        where: { slug: p.slug },
+        update: { moduleId: module.id }, // Assign to module
+        create: {
+          slug: p.slug,
+          description: p.description,
+          moduleId: module.id,
+        },
+      });
+      permissionMap.set(p.slug, permission.id);
+    }
   }
 
   // 2. Create Roles
@@ -96,6 +136,7 @@ export const seedRBAC = async () => {
         .filter((id) => id !== undefined);
     }
 
+    // Clean up old permissions if needed, here we just upsert
     for (const permissionId of permissionsToAssign) {
       await prisma.rolePermission.upsert({
         where: {

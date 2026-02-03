@@ -34,7 +34,7 @@ router.use(authenticateToken as any);
  */
 router.get(
   "/:type",
-  requirePermission("admin:manage_trash") as any,
+  requirePermission("trash:manage") as any,
   getDeletedItems as any,
 );
 
@@ -64,7 +64,7 @@ router.get(
  */
 router.post(
   "/:type/:id/restore",
-  requirePermission("admin:manage_trash") as any,
+  requirePermission("trash:manage") as any,
   restoreItem as any,
 );
 
@@ -94,7 +94,7 @@ router.post(
  */
 router.delete(
   "/:type/:id",
-  requirePermission("admin:manage_trash") as any,
+  requirePermission("trash:manage") as any,
   deletePermanentItem as any,
 );
 

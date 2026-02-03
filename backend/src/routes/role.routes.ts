@@ -28,11 +28,7 @@ router.use(authenticateToken as any);
  *       200:
  *         description: List of roles
  */
-router.get(
-  "/",
-  requirePermission("admin:manage_roles") as any,
-  getRoles as any,
-);
+router.get("/", requirePermission("roles:manage") as any, getRoles as any);
 
 /**
  * @swagger
@@ -56,7 +52,7 @@ router.get(
  */
 router.get(
   "/:id",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("roles:manage") as any,
   getRoleById as any,
 );
 
@@ -92,11 +88,7 @@ router.get(
  *       400:
  *         description: Bad request
  */
-router.post(
-  "/",
-  requirePermission("admin:manage_roles") as any,
-  createRole as any,
-);
+router.post("/", requirePermission("roles:manage") as any, createRole as any);
 
 /**
  * @swagger
@@ -131,11 +123,7 @@ router.post(
  *       200:
  *         description: Role updated
  */
-router.put(
-  "/:id",
-  requirePermission("admin:manage_roles") as any,
-  updateRole as any,
-);
+router.put("/:id", requirePermission("roles:manage") as any, updateRole as any);
 
 /**
  * @swagger
@@ -157,7 +145,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_roles") as any,
+  requirePermission("roles:manage") as any,
   deleteRole as any,
 );
 

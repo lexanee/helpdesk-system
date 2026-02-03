@@ -38,7 +38,7 @@ router.use(authenticateToken as any);
  */
 router.post(
   "/",
-  requirePermission("admin:manage_statuses") as any,
+  requirePermission("statuses:manage") as any,
   statusController.createStatus as any,
 );
 
@@ -87,7 +87,7 @@ router.get("/", statusController.getAllStatuses as any);
  */
 router.put(
   "/:id",
-  requirePermission("admin:manage_statuses") as any,
+  requirePermission("statuses:manage") as any,
   statusController.updateStatus as any,
 );
 
@@ -111,7 +111,7 @@ router.put(
  */
 router.delete(
   "/:id",
-  requirePermission("admin:manage_statuses") as any,
+  requirePermission("statuses:manage") as any,
   statusController.deleteStatus as any,
 );
 

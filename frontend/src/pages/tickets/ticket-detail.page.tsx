@@ -54,6 +54,7 @@ export default function TicketDetailPage() {
 
   const canManageTicket =
     hasRole(["administrator", "support_agent"]) ||
+    hasPermission("tickets:update") ||
     ticket?.assignedTo === user?.id;
 
   // Fetch all users for dropdowns (limit 1000) - Only if can manage ticket
@@ -252,7 +253,7 @@ export default function TicketDetailPage() {
         >
           Back to Tickets
         </Button>
-        <AccessGuard permissions="ticket:delete">
+        <AccessGuard permissions="tickets:delete">
           <Button
             color="red"
             leftSection={<IconTrash size={16} />}
@@ -333,8 +334,7 @@ export default function TicketDetailPage() {
                   style={{ flex: 1 }}
                 />
 
-                {/* Only Admins can assign tickets */}
-                <AccessGuard roles={["administrator"]}>
+                <AccessGuard permissions="tickets:assign">
                   <Select
                     label="Assign To"
                     placeholder="Select agent"
