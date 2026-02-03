@@ -28,6 +28,7 @@ import { Route as LayoutAdminStatusesRouteImport } from './routes/_layout/admin/
 import { Route as LayoutAdminServicesRouteImport } from './routes/_layout/admin/services'
 import { Route as LayoutAdminRolesRouteImport } from './routes/_layout/admin/roles'
 import { Route as LayoutAdminPrioritiesRouteImport } from './routes/_layout/admin/priorities'
+import { Route as LayoutAdminPermissionsRouteImport } from './routes/_layout/admin/permissions'
 import { Route as LayoutAdminLogsRouteImport } from './routes/_layout/admin/logs'
 import { Route as LayoutAdminCategoriesRouteImport } from './routes/_layout/admin/categories'
 
@@ -126,6 +127,11 @@ const LayoutAdminPrioritiesRoute = LayoutAdminPrioritiesRouteImport.update({
   path: '/admin/priorities',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAdminPermissionsRoute = LayoutAdminPermissionsRouteImport.update({
+  id: '/admin/permissions',
+  path: '/admin/permissions',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminLogsRoute = LayoutAdminLogsRouteImport.update({
   id: '/admin/logs',
   path: '/admin/logs',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/admin/categories': typeof LayoutAdminCategoriesRoute
   '/admin/logs': typeof LayoutAdminLogsRoute
+  '/admin/permissions': typeof LayoutAdminPermissionsRoute
   '/admin/priorities': typeof LayoutAdminPrioritiesRoute
   '/admin/roles': typeof LayoutAdminRolesRoute
   '/admin/services': typeof LayoutAdminServicesRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/admin/categories': typeof LayoutAdminCategoriesRoute
   '/admin/logs': typeof LayoutAdminLogsRoute
+  '/admin/permissions': typeof LayoutAdminPermissionsRoute
   '/admin/priorities': typeof LayoutAdminPrioritiesRoute
   '/admin/roles': typeof LayoutAdminRolesRoute
   '/admin/services': typeof LayoutAdminServicesRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/admin/categories': typeof LayoutAdminCategoriesRoute
   '/_layout/admin/logs': typeof LayoutAdminLogsRoute
+  '/_layout/admin/permissions': typeof LayoutAdminPermissionsRoute
   '/_layout/admin/priorities': typeof LayoutAdminPrioritiesRoute
   '/_layout/admin/roles': typeof LayoutAdminRolesRoute
   '/_layout/admin/services': typeof LayoutAdminServicesRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/categories'
     | '/admin/logs'
+    | '/admin/permissions'
     | '/admin/priorities'
     | '/admin/roles'
     | '/admin/services'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/categories'
     | '/admin/logs'
+    | '/admin/permissions'
     | '/admin/priorities'
     | '/admin/roles'
     | '/admin/services'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/_layout/admin/categories'
     | '/_layout/admin/logs'
+    | '/_layout/admin/permissions'
     | '/_layout/admin/priorities'
     | '/_layout/admin/roles'
     | '/_layout/admin/services'
@@ -411,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminPrioritiesRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/admin/permissions': {
+      id: '/_layout/admin/permissions'
+      path: '/admin/permissions'
+      fullPath: '/admin/permissions'
+      preLoaderRoute: typeof LayoutAdminPermissionsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin/logs': {
       id: '/_layout/admin/logs'
       path: '/admin/logs'
@@ -445,6 +464,7 @@ interface LayoutRouteChildren {
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutAdminCategoriesRoute: typeof LayoutAdminCategoriesRoute
   LayoutAdminLogsRoute: typeof LayoutAdminLogsRoute
+  LayoutAdminPermissionsRoute: typeof LayoutAdminPermissionsRoute
   LayoutAdminPrioritiesRoute: typeof LayoutAdminPrioritiesRoute
   LayoutAdminRolesRoute: typeof LayoutAdminRolesRoute
   LayoutAdminServicesRoute: typeof LayoutAdminServicesRoute
@@ -465,6 +485,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutAdminCategoriesRoute: LayoutAdminCategoriesRoute,
   LayoutAdminLogsRoute: LayoutAdminLogsRoute,
+  LayoutAdminPermissionsRoute: LayoutAdminPermissionsRoute,
   LayoutAdminPrioritiesRoute: LayoutAdminPrioritiesRoute,
   LayoutAdminRolesRoute: LayoutAdminRolesRoute,
   LayoutAdminServicesRoute: LayoutAdminServicesRoute,

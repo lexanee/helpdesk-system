@@ -180,7 +180,7 @@ export default function UsersPage() {
   return (
     <Container size="xl">
       <Title order={2} mb="xl">
-        User Management
+        Users
       </Title>
 
       <Paper withBorder p="md" mb="md">

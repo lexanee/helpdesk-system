@@ -10,7 +10,13 @@ import {
   getRoles,
   updateRole,
 } from "../controllers/role.controller.js";
-import { getAllPermissions } from "../controllers/permission.controller.js";
+import {
+  getAllPermissions,
+  createPermission,
+  updatePermission,
+  deletePermission,
+  getPermissionById,
+} from "../controllers/permission.controller.js";
 
 const router = express.Router();
 
@@ -33,6 +39,125 @@ router.get(
   "/permissions",
   requirePermission("admin:manage_roles") as any,
   getAllPermissions as any,
+);
+
+/**
+ * @swagger
+ * /rbac/permissions/{id}:
+ *   get:
+ *     summary: Get permission by ID
+ *     tags: [RBAC]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Permission details
+ *       404:
+ *         description: Permission not found
+ */
+router.get(
+  "/permissions/:id",
+  requirePermission("admin:manage_roles") as any,
+  getPermissionById as any,
+);
+
+/**
+ * @swagger
+ * /rbac/permissions:
+ *   post:
+ *     summary: Create a new permission
+ *     tags: [RBAC]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - slug
+ *               - description
+ *             properties:
+ *               slug:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Permission created
+ *       400:
+ *         description: Bad request
+ */
+router.post(
+  "/permissions",
+  requirePermission("admin:manage_roles") as any,
+  createPermission as any,
+);
+
+/**
+ * @swagger
+ * /rbac/permissions/{id}:
+ *   put:
+ *     summary: Update permission
+ *     tags: [RBAC]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               slug:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Permission updated
+ */
+router.put(
+  "/permissions/:id",
+  requirePermission("admin:manage_roles") as any,
+  updatePermission as any,
+);
+
+/**
+ * @swagger
+ * /rbac/permissions/{id}:
+ *   delete:
+ *     summary: Delete permission
+ *     tags: [RBAC]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Permission deleted
+ */
+router.delete(
+  "/permissions/:id",
+  requirePermission("admin:manage_roles") as any,
+  deletePermission as any,
 );
 
 // Roles

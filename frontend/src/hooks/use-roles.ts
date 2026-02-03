@@ -31,8 +31,11 @@ const fetchRoles = async (): Promise<Role[]> => {
 };
 
 const fetchPermissions = async (): Promise<Permission[]> => {
-  const { data } = await api.get("/rbac/permissions");
-  return data;
+  // Request a large limit to get all permissions for the dropdown
+  const { data } = await api.get("/rbac/permissions", {
+    params: { limit: 1000 },
+  });
+  return data.data || [];
 };
 
 export const useRoles = () => {
