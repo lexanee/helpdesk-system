@@ -13,8 +13,9 @@ import ticketRoutes from "./routes/ticket.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import logRoutes from "./routes/log.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import permissionRoutes from "./routes/permission.routes.js";
 import priorityRoutes from "./routes/priority.routes.js";
-import rbacRoutes from "./routes/rbac.routes.js";
+import roleRoutes from "./routes/role.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
 import sessionRoutes from "./routes/session.routes.js";
 import statusRoutes from "./routes/status.routes.js";
@@ -50,7 +51,8 @@ app.get("/swagger", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
-app.use("/api/rbac", rbacRoutes);
+app.use("/api/roles", roleRoutes);
+app.use("/api/permissions", permissionRoutes);
 app.use("/api/priorities", priorityRoutes);
 app.use("/api/trash", trashRoutes);
 app.use("/api/tickets", ticketRoutes);
