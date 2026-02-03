@@ -14,7 +14,7 @@ export interface Permission {
 import type { PaginationQueryParams } from "@/types/api";
 
 const fetchPermissions = async (params?: PaginationQueryParams) => {
-  const { data } = await api.get("/rbac/permissions", { params });
+  const { data } = await api.get("/permissions", { params });
   return data;
 };
 
@@ -41,8 +41,7 @@ export type UpdatePermissionDTO = z.infer<typeof updatePermissionSchema>;
 export const useCreatePermission = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreatePermissionDTO) =>
-      api.post("/rbac/permissions", data),
+    mutationFn: (data: CreatePermissionDTO) => api.post("/permissions", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
       // Also invalidate the list used by roles if different
@@ -55,7 +54,7 @@ export const useUpdatePermission = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdatePermissionDTO }) =>
-      api.put(`/rbac/permissions/${id}`, data),
+      api.put(`/permissions/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
       queryClient.invalidateQueries({ queryKey: ["permissions-list"] });
@@ -66,7 +65,7 @@ export const useUpdatePermission = () => {
 export const useDeletePermission = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/rbac/permissions/${id}`),
+    mutationFn: (id: string) => api.delete(`/permissions/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
       queryClient.invalidateQueries({ queryKey: ["permissions-list"] });

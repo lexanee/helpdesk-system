@@ -26,13 +26,13 @@ export interface Permission {
 }
 
 const fetchRoles = async (): Promise<Role[]> => {
-  const { data } = await api.get("/rbac/roles");
+  const { data } = await api.get("/roles");
   return data.data; // API returns { data: Role[], meta: ... }
 };
 
 const fetchPermissions = async (): Promise<Permission[]> => {
   // Request a large limit to get all permissions for the dropdown
-  const { data } = await api.get("/rbac/permissions", {
+  const { data } = await api.get("/permissions", {
     params: { limit: 1000 },
   });
   return data.data || [];
@@ -87,7 +87,7 @@ export interface UpdateRoleDTO {
 export const useCreateRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateRoleDTO) => api.post("/rbac/roles", data),
+    mutationFn: (data: CreateRoleDTO) => api.post("/roles", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
@@ -98,7 +98,7 @@ export const useUpdateRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateRoleDTO }) =>
-      api.put(`/rbac/roles/${id}`, data),
+      api.put(`/roles/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
@@ -108,7 +108,7 @@ export const useUpdateRole = () => {
 export const useDeleteRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/rbac/roles/${id}`),
+    mutationFn: (id: string) => api.delete(`/roles/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
